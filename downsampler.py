@@ -16,7 +16,8 @@ street_path = 'data/JKL WS100/Data/'
 
 
 def get_closest_lht(street: str) -> pd.DataFrame:
-	return pd.read_csv(LHT_files[0], sep = ';')  # TODO: function
+	df = pd.read_csv(LHT_files[0], sep = ';')  # TODO: function
+	return df
 
 
 def get_hourly(street: str, lht_included: bool = False) -> pd.DataFrame:
@@ -32,7 +33,13 @@ def get_hourly(street: str, lht_included: bool = False) -> pd.DataFrame:
 		df = pd.read_csv(f, sep = ';')
 		df['Timestamp'] = pd.to_datetime(df['Timestamp'])
 		df = df.set_index('Timestamp')
-		df_hourly = df.resample('h').mean().reset_index() # TODO: don't mean the type column
+
+		def mode_or_nan(x):
+			return x.mode().iloc[0] if not x.mode().empty else None
+
+		df_hourly = df.resample('h').agg(
+			{col: 'mean' for col in df.columns if col != 'precipitationType'} | {'precipitationType': mode_or_nan}
+		).reset_index()
 
 		if lht_included:
 			df = get_closest_lht(street)
@@ -44,11 +51,11 @@ def get_hourly(street: str, lht_included: bool = False) -> pd.DataFrame:
 		dfs.append(df_hourly)
 
 	df = pd.concat(dfs, ignore_index=True)
-	
-	print(df.head())
-
 	return df
 
 
 if __name__ == '__main__':
-	get_hourly('Saaritie', True)
+	df_out = get_hourly('Saaritie', True)
+
+	print(df_out.head())
+	pass
