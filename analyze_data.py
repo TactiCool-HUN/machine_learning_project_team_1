@@ -98,7 +98,7 @@ def analyze(df):
 # List of streets: Kotaniementie, Saaritie, Kaakkovuorentie, Tähtiniementie, Tuulimyllyntie.
 if __name__ == '__main__':
 #    # Downsample directly
-    df_out = ds.get_hourly('Tuulimyllyntie', lht_included=True)
+    df_out = ds.get_hourly('Kaakkovuorentie', lht_included=True)
     print(df_out.head())
 
     # Run the analysis
