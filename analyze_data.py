@@ -8,7 +8,10 @@ import seaborn as sns
 # import downsampler from same folder
 import downsampling as ds
 
-
+# beefore runnning, go to downsampling.py and comment out on bottom:
+#if __name__ == '__main__':
+#df_out = get_hourly('Saaritie', lht_included = True)
+#print(df_out.head())
 
 def analyze(df):
     print(f"Data shape: {df.shape}")
