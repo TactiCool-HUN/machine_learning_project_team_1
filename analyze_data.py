@@ -48,7 +48,14 @@ def analyze(df):
     missing = df.isna().sum()
     if missing.any():
         print("\nMissing values:")
-        print(missing[missing > 0])
+        total_rows = len(df)
+        missing_pct = (missing / total_rows * 100).round(2)
+        # Print only columns with missing values
+        for col in missing[missing > 0].index:
+            count = missing[col]
+            pct = missing_pct[col]
+            print(f"{col}: {count} missing ({pct}%)")
+      
     else:
         print("No missing values.")
 
@@ -101,7 +108,7 @@ def analyze(df):
 # List of streets: Kotaniementie, Saaritie, Kaakkovuorentie, Tähtiniementie, Tuulimyllyntie.
 if __name__ == '__main__':
 #    # Downsample directly
-    df_out = ds.get_hourly('Kaakkovuorentie', lht_included=True)
+    df_out = ds.get_hourly('Kotaniementie', lht_included=True)
     print(df_out.head())
 
     # Run the analysis
@@ -113,3 +120,6 @@ if __name__ == '__main__':
 #    print(df_out.head())
 
 #    analyze(df_out)
+
+#Results:
+#
