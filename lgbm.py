@@ -13,7 +13,7 @@ df["rain_3h_ahead"] = df["rain_3h_ahead"].astype(int)
 df = df.drop(columns=["precipitationIntensity_mm_h"])
 
 # --- lag features ---
-lags = [1, 2, 3, 6, 12, 24, 48, 72]  # past hours
+lags = [1, 2, 3, 6, 12, 24, 48, 72]
 for lag in lags:
 	df[f"precip_quan_lag_{lag}"] = df["precipitationQuantityDiff_mm"].shift(lag)
 	df[f"temp_lag_{lag}"] = df["TempC_SHT"].shift(lag)
@@ -25,7 +25,7 @@ df["hum_roll_3"] = df["Hum_SHT"].rolling(window=3, min_periods=1).mean().shift(1
 
 df = df.dropna()
 
-# --- train/test split (chronological) ---
+# --- train/test split ---
 split_idx = int(len(df) * 0.8)
 train_df = df.iloc[:split_idx]
 test_df = df.iloc[split_idx:]
@@ -53,7 +53,7 @@ predictions = model.predict(X_test)
 print("Accuracy:", accuracy_score(y_test, predictions))
 print(classification_report(y_test, predictions))
 
-# --- optional: baseline for 3h ahead ---
+# --- baseline for 3h ahead ---
 y_pred_baseline = X_test['precip_quan_lag_3'].apply(lambda x: 1 if x > 0 else 0)
 print("\n3h-Ahead Baseline Accuracy:", accuracy_score(y_test, y_pred_baseline))
 print(classification_report(y_test, y_pred_baseline))
