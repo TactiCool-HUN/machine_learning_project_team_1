@@ -122,4 +122,8 @@ if __name__ == '__main__':
 #    analyze(df_out)
 
 #Results:
-#
+# Tähtiniementie - 736 missing (1.78%)
+# Tuulimyllyntie - 502 missing (1.22%)
+# Kaakkovuorentie -  542 missing (4.23%) 
+# Kotaniementie - 390 missing (0.94%)
+# Saaritie - 1249 missing (3.02%)
