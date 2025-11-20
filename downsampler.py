@@ -103,7 +103,7 @@ def get_ten_minutely(street: str, **kwargs) -> pd.DataFrame:
 	return df
 
 
-def _get_standardized_time(street: str, lht_included: bool = False, resample_frequency: str = '10min') -> pd.DataFrame:
+def _get_standardized_time(street: str, lht_included: bool = False, resample_frequency: str = '10min', **kwargs) -> pd.DataFrame:
 	path = _street_path + street.capitalize() + "/"
 	csv_files = [
 		os.path.join(path, f)
@@ -116,12 +116,14 @@ def _get_standardized_time(street: str, lht_included: bool = False, resample_fre
 		df = pd.read_csv(f, sep = ';')
 		df['Timestamp'] = pd.to_datetime(df['Timestamp'])
 		df = df.set_index('Timestamp')
-		df = df.drop(['precipitationIntensity_mm_min', 'precipitationQuantityAbs_mm'], axis = 1)
-		# remains:
-		# precipitationIntensity_mm_h
-		# precipitationQuantityDiff_mm
-		# precipitationType
-		df.fillna(0, inplace=True)
+		if kwargs.get('drop_useless_columns', True):
+			df = df.drop(['precipitationIntensity_mm_min', 'precipitationQuantityAbs_mm'], axis = 1)
+			# remains:
+			# precipitationIntensity_mm_h
+			# precipitationQuantityDiff_mm
+			# precipitationType
+		if kwargs.get('fill_empty', True):
+			df.fillna(0, inplace=True)
 
 		def mode_or_nan(x):
 			return x.mode().iloc[0] if not x.mode().empty else None
