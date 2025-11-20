@@ -25,9 +25,9 @@ _street_path = 'data/JKL WS100/Data/'
 def _haversine(lat1, lon1, lat2, lon2):
 	earth_radius_km = 6371
 	lat1, lon1, lat2, lon2 = map(np.radians, [lat1, lon1, lat2, lon2])
-	d_lat = lat2 - lat1
-	d_lon = lon2 - lon1
-	a = np.sin(d_lat/2)**2 + np.cos(lat1)*np.cos(lat2)*np.sin(d_lon/2)**2
+	delta_lat = lat2 - lat1
+	delta_lon = lon2 - lon1
+	a = np.sin(delta_lat/2)**2 + np.cos(lat1)*np.cos(lat2)*np.sin(delta_lon/2)**2
 	return 2 * earth_radius_km * np.arcsin(np.sqrt(a))
 
 
@@ -116,6 +116,12 @@ def _get_standardized_time(street: str, lht_included: bool = False, resample_fre
 		df = pd.read_csv(f, sep = ';')
 		df['Timestamp'] = pd.to_datetime(df['Timestamp'])
 		df = df.set_index('Timestamp')
+		df = df.drop(['precipitationIntensity_mm_min', 'precipitationQuantityAbs_mm'], axis = 1)
+		# remains:
+		# precipitationIntensity_mm_h
+		# precipitationQuantityDiff_mm
+		# precipitationType
+		df.fillna(0, inplace=True)
 
 		def mode_or_nan(x):
 			return x.mode().iloc[0] if not x.mode().empty else None
