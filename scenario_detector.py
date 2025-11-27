@@ -73,19 +73,21 @@ def find_rain_scenarios(df, prints: bool = False):
 
 
 def extract_week(df, week_end):
-	"""
-	Returns the full 7-day window for the scenario.
-	"""
-	if week_end is None:
-		return None
+    if week_end is None:
+        return None
 
-	df = df.copy()
-	df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+    df = df.copy()
 
-	start = week_end - pd.Timedelta(days=7)
-	mask = (df['Timestamp'] >= start) & (df['Timestamp'] < week_end + pd.Timedelta(days=1))
+    # Handle case where Timestamp is the index
+    if 'Timestamp' not in df.columns:
+        df = df.reset_index()
 
-	return df.loc[mask]
+    df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+
+    start = week_end - pd.Timedelta(days=7)
+    mask = (df['Timestamp'] >= start) & (df['Timestamp'] < week_end + pd.Timedelta(days=1))
+
+    return df.loc[mask]
 
 if __name__ == "__main__":
 
