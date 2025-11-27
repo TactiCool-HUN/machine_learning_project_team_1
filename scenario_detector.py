@@ -83,7 +83,7 @@ def extract_week(df, week_end):
 	df['Timestamp'] = pd.to_datetime(df['Timestamp'])
 
 	start = week_end - pd.Timedelta(days=7)
-	mask = (df['Timestamp'] >= start) & (df['Timestamp'] <= week_end)
+	mask = (df['Timestamp'] >= start) & (df['Timestamp'] < week_end + pd.Timedelta(days=1))
 
 	return df.loc[mask]
 
