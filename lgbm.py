@@ -4,7 +4,7 @@ from sklearn.metrics import accuracy_score, classification_report
 from downsampler import get_hourly
 
 
-def make_model(street_name: str):
+def make_model(street_name: str, prints: bool = False):
 	# --- load data ---
 	df = get_hourly(street_name, lht_included=True)
 	df = df.set_index("Timestamp").sort_index()
@@ -21,7 +21,7 @@ def make_model(street_name: str):
 		df[f"temp_lag_{lag}"] = df["TempC_SHT"].shift(lag)
 		df[f"hum_lag_{lag}"] = df["Hum_SHT"].shift(lag)
 	
-	# --- Rolling features ---
+	# --- rolling features ---
 	df["temp_roll_3"] = df["TempC_SHT"].rolling(window=3, min_periods=1).mean().shift(3)
 	df["hum_roll_3"] = df["Hum_SHT"].rolling(window=3, min_periods=1).mean().shift(3)
 	
@@ -66,6 +66,6 @@ def make_model(street_name: str):
 if __name__ == '__main__':
 	streets = ['Kaakkovuorentie', 'Kotaniementie', 'Saaritie', 'Tuulimyllyntie', 'Tähtiniementie']
 	for street in streets:
-		make_model(street)
+		make_model(street, prints = True)
 
 pass
