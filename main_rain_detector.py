@@ -1,34 +1,22 @@
-from analyze_data_fillna_0 import analyze
 from scenario_detector import find_rain_scenarios, extract_week
-import downsampler as ds
+from lgbm import feature_engineering
 
 
-def get_scenarios(prints: bool = False):
-	# 1. Load hourly data for a street
-	df_raw = ds.get_hourly('Saaritie', lht_included=True)
-	
-	# 2. Clean missing values (analyze() must return df_no_missing)
-	df_clean = analyze(df_raw)
-	
-	# 3. Detect 3 rainfall scenarios
-	scenarios = find_rain_scenarios(df_clean)
+def get_scenarios(df, prints: bool = False):
+	df = df.reset_index()
+	scenarios = find_rain_scenarios(df)
 	if prints:
 		print("Detected scenarios:", scenarios)
-	
-	# 4. Extract 3 weeks
-	week_no_rain = extract_week(df_clean, scenarios["NO_RAIN_WEEK"])
-	week_small    = extract_week(df_clean, scenarios["MANY_SMALL_RAIN_WEEK"])
-	week_heavy    = extract_week(df_clean, scenarios["HEAVY_RAIN_WEEK"])
-	
+
 	return {
-		'dry': week_no_rain,
-		'drizzle': week_small,
-		'downpour': week_heavy,
+		'dry': extract_week(df, scenarios["NO_RAIN_WEEK"]),
+		'drizzle': extract_week(df, scenarios["MANY_SMALL_RAIN_WEEK"]),
+		'downpour': extract_week(df, scenarios["HEAVY_RAIN_WEEK"]),
 	}
 
 
 if __name__ == '__main__':
-	scenarios_out = get_scenarios(prints = True)
+	scenarios_out = get_scenarios(feature_engineering('Saaritie'), prints = True)
 	for key in scenarios_out:
 		print(f"{key} shape:", None if scenarios_out[key] is None else scenarios_out[key].shape)
 
